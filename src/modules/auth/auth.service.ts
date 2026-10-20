@@ -3,10 +3,7 @@ import { prisma } from "../../config/prisma";
 import { AppError } from "../../errors/appError";
 import { comparePassword, hashPassword } from "../../utils/password";
 import { randomUUID } from "crypto";
-import {
-  generateRefreshToken,
-  hashRefreshToken,
-} from "../../utils/refreshToken";
+import { hashRefreshToken } from "../../utils/refreshToken";
 import { redis } from "../../config/redis";
 import { env } from "../../config/env";
 import {
@@ -169,7 +166,11 @@ export class AuthService {
     role: string,
   ): Promise<AuthResult> {
     const sessionId = randomUUID();
-    const refreshToken = generateRefreshToken();
+    const refreshToken = signRefreshToken({
+      sub: userId,
+      sessionId,
+      type: "refresh",
+    });
 
     const refreshTokenHash = hashRefreshToken(refreshToken);
 

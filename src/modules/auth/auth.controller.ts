@@ -61,6 +61,7 @@ export class AuthController {
           message: "Refresh token is required",
         },
       });
+      return;
     }
 
     const result = await authService.refresh(refreshToken);
@@ -70,7 +71,7 @@ export class AuthController {
     res.status(200).json({
       success: true,
       data: {
-        accessToke: result.accessToken,
+        accessToken: result.accessToken,
       },
     });
   }
