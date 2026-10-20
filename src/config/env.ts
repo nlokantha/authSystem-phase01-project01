@@ -28,5 +28,4 @@ const envSchema = z.object({
   COOKIE_SAME_SITE: z.enum(["strict", "lax", "none"]).default("lax"),
 });
 
-
-export const env = envSchema.parse(process.env)
+export const env = envSchema.parse(process.env);
