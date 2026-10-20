@@ -14,6 +14,7 @@ const controller = new AuthController()
 router.post("/register", validate(registerSchema), controller.register.bind(controller))
 router.post("/login", validate(loginSchema), controller.login.bind(controller))
 router.post("/refresh",validate(refreshSchema),controller.refresh.bind(controller))
-router.post("/logout",validate(refreshSchema),controller.logout.bind(controller))
+router.post("/logout", validate(refreshSchema), controller.logout.bind(controller))
+router.post("/logout-all",validate(refreshSchema),controller.logoutAll.bind(controller))
 
 export default router;

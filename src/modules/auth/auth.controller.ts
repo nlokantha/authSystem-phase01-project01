@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
 import { env } from "../../config/env";
+import { AppError } from "../../errors/appError";
 
 const authService = new AuthService();
 
@@ -23,9 +24,19 @@ const clearRefreshTokenCookie = (res: Response): void => {
   });
 };
 
+
+const getSessionMetadata = (req: Request) => {
+  return {
+    ip: req.ip,
+    userAgent:req.get("user-agent") ?? undefined
+  }
+}
+
+
+
 export class AuthController {
   async register(req: Request, res: Response): Promise<void> {
-    const result = await authService.register(req.body);
+    const result = await authService.register(req.body,getSessionMetadata(req));
 
     setRefrehTokenCookie(res, result.refreshToken);
 
@@ -38,7 +49,7 @@ export class AuthController {
   }
 
   async login(req: Request, res: Response): Promise<void> {
-    const result = await authService.login(req.body);
+    const result = await authService.login(req.body,getSessionMetadata(req));
 
     setRefrehTokenCookie(res, result.refreshToken);
 
@@ -64,7 +75,7 @@ export class AuthController {
       return;
     }
 
-    const result = await authService.refresh(refreshToken);
+    const result = await authService.refresh(refreshToken,getSessionMetadata(req));
 
     setRefrehTokenCookie(res, result.refreshToken);
 
@@ -86,5 +97,18 @@ export class AuthController {
     clearRefreshTokenCookie(res);
 
     res.status(204).send();
+  }
+
+
+  async logoutAll(req: Request, res: Response): Promise<void>{
+    if (!req.user) {
+      throw new AppError(401,"UNAUTHORIZED","Authentication required")
+    }
+
+    await authService.logoutAll(req.user.id)
+
+    clearRefreshTokenCookie(res)
+
+    res.status(204).send()
   }
 }

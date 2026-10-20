@@ -2,8 +2,6 @@ import { env } from "../config/env";
 import { redis } from "../config/redis";
 import { RefreshSession } from "../types/auth";
 
-
-
 const SESSION_PREFIX = "auth:session";
 
 export const getSessionKey = (sessionId: string): string => {
