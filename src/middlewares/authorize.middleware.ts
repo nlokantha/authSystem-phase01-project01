@@ -1,7 +1,6 @@
 import type {RequestHandler,NextFunction, Request, Response} from "express"
 import { AppError } from "../errors/appError"
-
-type UserRole = "USER" | "ADMIN"
+import { UserRole } from "../types/roles"
 
 
 const VALID_ROLES = new Set<UserRole>(["USER", "ADMIN"])

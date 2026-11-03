@@ -1,6 +1,11 @@
 import { Prisma, PrismaClient } from "../../generated/prisma";
 
 
+interface PaginationOptions{
+  page: number
+  limit:number
+}
+
 export class UserRepository {
   constructor(
     private readonly prisma:PrismaClient
@@ -24,6 +29,23 @@ export class UserRepository {
 
   async findById(id: string) {
     return this.prisma.user.findUnique({
+      where: {
+        id
+      }
+    })
+  }
+
+  async getAll({ page, limit }: PaginationOptions) {
+    const skip = (page-1)*limit
+    return this.prisma.user.findMany({
+      skip, take: limit, orderBy: {
+        createdAt:"desc"
+      }
+    })
+  }
+
+  async deleteById(id: string) {
+    return this.prisma.user.delete({
       where: {
         id
       }

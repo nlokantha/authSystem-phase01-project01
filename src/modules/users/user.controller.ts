@@ -20,4 +20,13 @@ export class UserController {
       data:user
     })
   }
+
+
+  async getAll(req: Request, res: Response): Promise<void>{
+    const users = await userService.getAll()
+    res.status(200).json({
+      success: true,
+      data:users
+    })
+  }
 }

@@ -22,4 +22,35 @@ export class UserService {
       updatedAt:user.updatedAt
     }
   }
+
+  async getAll(page=1,limit=10) {
+    const users = await userRepository.getAll({ page, limit })
+
+    return users.map((user) => ({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
+      }))
+
+  }
+
+  async deleteById(userId: string) {
+    const user = await userRepository.findById(userId)
+
+    if (!user) {
+      throw new AppError(404,
+        "USER_NOT_FOUND",
+             "User not found"
+      )
+    }
+
+    await userRepository.deleteById((userId))
+
+    return {
+      message:"User Deleted Successfully!"
+    }
+  }
 }

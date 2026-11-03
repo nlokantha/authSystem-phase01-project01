@@ -1,3 +1,3 @@
-type UserRole = "USER" | "ADMIN"
+import { UserRole } from "../../generated/prisma"
 
 export {UserRole}
