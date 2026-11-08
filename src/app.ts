@@ -27,7 +27,6 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/v1/auth", authRoutes);
-
 app.use("/api/v1/users", userRoutes);
 
 app.use(notFoundHandler);

@@ -5,6 +5,13 @@ import { AppError } from "../../errors/appError";
 
 const userRepository = new UserRepository(prisma)
 
+interface UpdateUserInput {
+  email: string;
+  password: string;
+  name?: string;
+}
+
+
 export class UserService {
   async getMe(userId: string) {
     const user = await userRepository.findById(userId)
@@ -51,6 +58,26 @@ export class UserService {
 
     return {
       message:"User Deleted Successfully!"
+    }
+  }
+
+  async updateById(userId: string ,data:UpdateUserInput) {
+    const user = await userRepository.findById(userId)
+    if (!user) {
+      throw new AppError(404,
+        "USER_NOT_FOUND",
+             "User not found"
+      )
+    }
+
+    await userRepository.update(userId, data)
+
+    return {
+      message: "User Update Successfully",
+      user: {
+        id: user.id,
+        email:user.email
+      }
     }
   }
 }

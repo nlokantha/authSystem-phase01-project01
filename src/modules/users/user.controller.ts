@@ -29,4 +29,6 @@ export class UserController {
       data:users
     })
   }
+
+  // async updateUser(req:Request,res:Response):
 }

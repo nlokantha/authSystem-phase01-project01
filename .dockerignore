@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.env.sample
+dist
+.DS_Store
+.vscode
+.windsurf
+generated
+.claude
+.agents
+skills-lock.json
+README.md
+.node_modules
