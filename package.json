@@ -7,8 +7,9 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "db:migrate": "prisma migrate dev --name init",
-    "db:generate": "prisma generate"
+    "db:migrate": "prisma migrate dev --name init --config prisma7.config.ts",
+    "db:deploy": "prisma migrate deploy --config prisma7.config.ts",
+    "db:generate": "prisma generate --config prisma7.config.ts"
   },
   "keywords": [],
   "author": "",
@@ -33,6 +34,7 @@
     "@types/node": "^26.6.1",
     "@types/pg": "^8.23.1",
     "prisma": "^7.10.0",
-    "tsx": "^4.23.15"
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }

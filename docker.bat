@@ -11,13 +11,14 @@ goto !command!
 :start
 echo.
 echo Starting Docker Containers (Development)...
-docker-compose up -d
+docker-compose up -d --build --wait
+if errorlevel 1 exit /b %errorlevel%
 echo.
-echo Containers started. Waiting 15 seconds for services to start...
-timeout /t 15 /nobreak
 docker-compose ps
+if errorlevel 1 exit /b %errorlevel%
+echo Containers started and healthy.
 echo.
-echo To run migrations: docker-compose exec app npm run db:migrate
+echo To run migrations: docker.bat migrate
 echo To view logs: docker-compose logs -f
 echo API available at: http://localhost:3000
 goto end
@@ -26,6 +27,7 @@ goto end
 echo.
 echo Stopping Docker Containers...
 docker-compose stop
+if errorlevel 1 exit /b %errorlevel%
 echo Containers stopped.
 goto end
 
@@ -33,6 +35,7 @@ goto end
 echo.
 echo Stopping and Removing Containers...
 docker-compose down
+if errorlevel 1 exit /b %errorlevel%
 echo Containers removed.
 goto end
 
@@ -47,7 +50,8 @@ goto end
 :migrate
 echo.
 echo Running Database Migrations...
-docker-compose exec app npm run db:migrate
+docker-compose exec -T app npm run db:deploy
+if errorlevel 1 exit /b %errorlevel%
 echo Migrations complete.
 goto end
 
@@ -55,6 +59,7 @@ goto end
 echo.
 echo Building Docker Image...
 docker-compose build
+if errorlevel 1 exit /b %errorlevel%
 echo Build complete.
 goto end
 
@@ -62,18 +67,21 @@ goto end
 echo.
 echo Rebuilding and Starting...
 docker-compose down
+if errorlevel 1 exit /b %errorlevel%
 docker-compose build
-docker-compose up -d
-echo Waiting for services...
-timeout /t 15 /nobreak
+if errorlevel 1 exit /b %errorlevel%
+docker-compose up -d --wait
+if errorlevel 1 exit /b %errorlevel%
 docker-compose ps
+if errorlevel 1 exit /b %errorlevel%
 echo Rebuild complete.
 goto end
 
 :prod-start
 echo.
 echo Starting Production Stack...
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.prod.yml up -d --build --wait
+if errorlevel 1 exit /b %errorlevel%
 echo Production containers started.
 docker-compose -f docker-compose.prod.yml ps
 goto end
@@ -82,6 +90,7 @@ goto end
 echo.
 echo Stopping Production Stack...
 docker-compose -f docker-compose.prod.yml stop
+if errorlevel 1 exit /b %errorlevel%
 echo Production containers stopped.
 goto end
 
@@ -123,6 +132,7 @@ echo WARNING: This will remove all containers and volumes!
 set /p response="Continue? (y/n): "
 if /i "!response!"=="y" (
     docker-compose down -v
+    if errorlevel 1 exit /b 1
     echo Cleanup complete.
 ) else (
     echo Cleanup cancelled.

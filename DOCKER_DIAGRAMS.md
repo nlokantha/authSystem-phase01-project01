@@ -187,7 +187,7 @@ Time │ Event
  15s │ └─ All services healthy
      │    └─ API ready at localhost:3000
      │
- 20s │ docker-compose exec app npm run db:migrate
+ 20s │ docker-compose exec -T app npm run db:deploy
      │ ├─ Read schema.prisma
      │ ├─ Check pending migrations
      │ ├─ Apply migrations to PostgreSQL
@@ -488,7 +488,7 @@ Cannot connect to database?
 │  └─ Check .env file
 │
 ├─ Wait for startup
-│  └─ sleep 10 && docker-compose exec app npm run db:migrate
+│  └─ sleep 10 && docker-compose exec -T app npm run db:deploy
 │
 └─ Test connection
    └─ docker-compose exec app psql -h postgres -U authuser

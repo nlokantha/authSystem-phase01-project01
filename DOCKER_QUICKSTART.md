@@ -88,7 +88,7 @@ docker-compose up -d
 docker.bat migrate
 
 # Or directly
-docker-compose exec app npm run db:migrate
+docker-compose exec -T app npm run db:deploy
 ```
 
 **That's it!** Your application is now running at http://localhost:3000
@@ -344,7 +344,7 @@ docker run -p 3000:3000 \
 
 ### For Production
 - 🔒 Change default database passwords in .env
-- 🔒 Use strong JWT_SECRET (minimum 32 characters)
+- 🔒 Use different, strong JWT_ACCESS_SECRET and JWT_REFRESH_SECRET values (minimum 32 characters each)
 - 🔒 Store secrets in secure vaults
 - 🔒 Use HTTPS/TLS for external communication
 - 🔒 Implement rate limiting

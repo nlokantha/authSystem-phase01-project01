@@ -7,9 +7,12 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 COPY prisma ./prisma
+COPY prisma7.config.ts ./
 
 # Install dependencies
-RUN npm ci
+RUN npm ci --include=dev
+
+RUN npm run db:generate
 
 # Copy source code
 COPY src ./src
@@ -30,10 +33,11 @@ COPY package*.json ./
 COPY prisma ./prisma
 
 # Install production dependencies only
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/generated ./generated
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \

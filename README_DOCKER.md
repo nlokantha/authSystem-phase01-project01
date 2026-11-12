@@ -140,7 +140,7 @@ kill -9 <PID>  # Kill it
 **Database connection failed?**
 ```bash
 docker-compose restart postgres
-docker-compose exec app npm run db:migrate
+docker-compose exec -T app npm run db:deploy
 ```
 
 **Need full troubleshooting?** See [DOCKER_SETUP.md](./DOCKER_SETUP.md#troubleshooting)

@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../errors/appError";
 import { AccessTokenPayload, verifyAccessToken } from "../utils/jwt";
+import type { UserRole } from "../../generated/prisma";
 
 export interface AuthenticatedRequest
   extends Request {
   user: {
     id: string;
-    role: string;
+    role: UserRole;
   };
 }
 

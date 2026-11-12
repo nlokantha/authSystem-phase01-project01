@@ -1,13 +1,11 @@
-
-
-type RequestUserRole = "USER" | "ADMIN"
+import type { UserRole } from "../../generated/prisma";
 
 declare global {
   namespace Express {
     interface Request {
       user?: {
         id: string;
-        role: RequestUserRole;
+        role: UserRole;
       };
     }
   }

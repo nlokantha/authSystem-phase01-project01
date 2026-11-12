@@ -12,6 +12,7 @@ import {
   verifyRefreshToken,
 } from "../../utils/jwt";
 import { createRefreshSession, deleteRefreshSession, getRefreshSession, updateRefreshSession } from "../../utils/authSession";
+import type { UserRole } from "../../../generated/prisma";
 
 const userRepository = new UserRepository(prisma);
 
@@ -193,7 +194,7 @@ export class AuthService {
   async logoutAll(userId: string): Promise<void>{
     const pattern = `${"auth:session"}:*`;
 
-    let cursor = 0
+    let cursor = "0"
 
     do {
       const result = await redis.scan(cursor, {
@@ -233,13 +234,13 @@ export class AuthService {
         await redis.del(keysToDelete)
       }
 
-    } while(cursor !== 0)
+    } while(cursor !== "0")
   }
 
 
   private async createSession(
     userId: string,
-    role: string,
+    role: UserRole,
     metadata:SessionMetadata
   ): Promise<AuthResult> {
     const sessionId = randomUUID();

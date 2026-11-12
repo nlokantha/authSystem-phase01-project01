@@ -44,6 +44,8 @@ Welcome! This folder contains complete Docker documentation for the Auth System 
 ```bash
 # 1. Set up environment
 cp .env.example .env
+# Set JWT_ACCESS_SECRET and JWT_REFRESH_SECRET in .env to different,
+# unpredictable values of at least 32 characters each.
 
 # 2. Start everything
 ./docker.sh start
@@ -53,6 +55,17 @@ cp .env.example .env
 
 # 4. Done! Visit http://localhost:3000
 ```
+
+The development image includes TypeScript, Prisma, and the generated client;
+source changes are reloaded automatically. The migration command applies the
+existing migrations without creating new ones. For production, apply migrations
+using the development image against the production database before deployment;
+the production image does not include the Prisma CLI.
+
+If host port 5432 is already in use, set `POSTGRES_PORT=5433` in `.env`
+(or another available port) before starting. Host database clients should then
+connect to `localhost:5433`; the app still connects to `postgres:5432` inside
+the Docker network. This does not affect the existing database on port 5432.
 
 ---
 

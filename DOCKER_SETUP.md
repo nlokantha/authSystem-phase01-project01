@@ -6,7 +6,8 @@ This guide walks you through dockerizing the Auth System project step by step.
 
 - Docker Desktop installed (includes Docker and Docker Compose)
 - Git
-- No services running on ports 3000, 5432, or 6379
+- Ports 3000, 5432, and 6379 available (or set `POSTGRES_PORT` in `.env` to
+  an available host port if 5432 is occupied)
 
 ## Files Created
 
@@ -35,14 +36,16 @@ Create your `.env` file from the template:
 cp .env.example .env
 ```
 
-Update the `.env` file with your configurations (especially `JWT_SECRET` for production):
+Update the `.env` file with your configurations. Set both JWT secrets to different,
+unpredictable values of at least 32 characters, especially for production:
 
 ```env
 DATABASE_URL=postgresql://authuser:authpassword@postgres:5432/authsystem
 REDIS_URL=redis://redis:6379
 NODE_ENV=development
 PORT=3000
-JWT_SECRET=your-super-secret-key-change-this
+JWT_ACCESS_SECRET=replace-this-access-secret-with-a-unique-value
+JWT_REFRESH_SECRET=replace-this-refresh-secret-with-a-unique-value
 ```
 
 ## Step 3: Build and Run with Docker Compose (Development)
@@ -54,7 +57,7 @@ JWT_SECRET=your-super-secret-key-change-this
 docker-compose up
 
 # In another terminal, run migrations (if needed)
-docker-compose exec app npm run db:migrate
+docker-compose exec -T app npm run db:deploy
 
 # View logs
 docker-compose logs -f
@@ -113,7 +116,7 @@ The first time you run the containers, you need to set up the database:
 
 ```bash
 # Development
-docker-compose exec app npm run db:migrate
+docker-compose exec -T app npm run db:deploy
 
 # Production
 docker-compose -f docker-compose.prod.yml exec app npm run db:migrate
@@ -315,7 +318,7 @@ The application includes health checks that:
 ## Next Steps
 
 1. Start with: `docker-compose up`
-2. Run migrations: `docker-compose exec app npm run db:migrate`
+2. Run migrations: `docker-compose exec -T app npm run db:deploy`
 3. Test the API
 4. For production: Switch to `docker-compose.prod.yml`
 

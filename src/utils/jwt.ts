@@ -1,9 +1,10 @@
-import jwt from "jsonwebtoken";
+import jwt, { type SignOptions } from "jsonwebtoken";
 import { env } from "../config/env";
+import type { UserRole } from "../../generated/prisma";
 
 export interface AccessTokenPayload {
   sub: string;
-  role: string;
+  role: UserRole;
   type: "access";
 }
 
@@ -15,13 +16,13 @@ export interface RefreshTokenPayload {
 
 export const signAccessToken = (payload: AccessTokenPayload): string => {
   return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
-    expiresIn: env.JWT_ACCESS_EXPIRES_IN,
+    expiresIn: env.JWT_ACCESS_EXPIRES_IN as SignOptions["expiresIn"],
   });
 };
 
 export const signRefreshToken = (payload: RefreshTokenPayload): string => {
   return jwt.sign(payload, env.JWT_REFRESH_SECRET, {
-    expiresIn: env.JWT_REFRESH_EXPIRES_IN,
+    expiresIn: env.JWT_REFRESH_EXPIRES_IN as SignOptions["expiresIn"],
   });
 };
 

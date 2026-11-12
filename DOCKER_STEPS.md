@@ -145,7 +145,7 @@ Set up your database schema.
 ./docker.sh migrate
 
 # Option B: Using docker-compose
-docker-compose exec app npm run db:migrate
+docker-compose exec -T app npm run db:deploy
 
 # Option C: Generate Prisma client
 docker-compose exec app npm run db:generate

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -30,14 +32,11 @@ print_info() {
 case "${1:-help}" in
     start)
         print_header "Starting Docker Containers (Development)"
-        docker-compose up -d
-        print_success "Containers started"
-        echo ""
-        print_info "Services starting up... waiting 15 seconds"
-        sleep 15
+        docker-compose up -d --build --wait
         docker-compose ps
+        print_success "Containers started and healthy"
         echo ""
-        print_info "To run migrations: docker-compose exec app npm run db:migrate"
+        print_info "To run migrations: ./docker.sh migrate"
         print_info "To view logs: docker-compose logs -f"
         print_info "API available at: http://localhost:3000"
         ;;
@@ -61,7 +60,7 @@ case "${1:-help}" in
 
     migrate)
         print_header "Running Database Migrations"
-        docker-compose exec app npm run db:migrate
+        docker-compose exec -T app npm run db:deploy
         print_success "Migrations complete"
         ;;
 
@@ -75,15 +74,14 @@ case "${1:-help}" in
         print_header "Rebuilding and Starting"
         docker-compose down
         docker-compose build
-        docker-compose up -d
-        sleep 15
+        docker-compose up -d --wait
         docker-compose ps
         print_success "Rebuild complete"
         ;;
 
     prod-start)
         print_header "Starting Production Stack"
-        docker-compose -f docker-compose.prod.yml up -d
+        docker-compose -f docker-compose.prod.yml up -d --build --wait
         print_success "Production containers started"
         docker-compose -f docker-compose.prod.yml ps
         ;;
@@ -136,9 +134,11 @@ case "${1:-help}" in
         docker-compose ps
         echo ""
         print_info "Testing connectivity..."
-        docker-compose exec app npm run dev &>/dev/null && print_success "App container is healthy" || print_error "App container issue"
-        docker-compose exec postgres pg_isready -U authuser &>/dev/null && print_success "PostgreSQL is healthy" || print_error "PostgreSQL issue"
-        docker-compose exec redis redis-cli ping &>/dev/null && print_success "Redis is healthy" || print_error "Redis issue"
+        health_status=0
+        docker-compose exec -T app node -e "require('http').get('http://localhost:3000/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))" && print_success "App container is healthy" || { print_error "App container issue"; health_status=1; }
+        docker-compose exec -T postgres pg_isready -U authuser &>/dev/null && print_success "PostgreSQL is healthy" || { print_error "PostgreSQL issue"; health_status=1; }
+        docker-compose exec -T redis redis-cli ping &>/dev/null && print_success "Redis is healthy" || { print_error "Redis issue"; health_status=1; }
+        exit "$health_status"
         ;;
 
     help|*)

@@ -103,7 +103,7 @@ Your project has been dockerized! Use this checklist to get started.
 ## Production Checklist
 
 - [ ] Update credentials in `.env` file
-- [ ] Change JWT_SECRET to strong value (32+ chars)
+- [ ] Set distinct JWT_ACCESS_SECRET and JWT_REFRESH_SECRET values (32+ chars each)
 - [ ] Change database password
 - [ ] Change Redis password if needed
 - [ ] Test with: `docker-compose -f docker-compose.prod.yml up -d`
